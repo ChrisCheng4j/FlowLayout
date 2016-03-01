@@ -1,0 +1,14 @@
+<resources>
+    <declare-styleable name="FlowLayout">
+        <attr name="marginHorizontal" format="dimension" />
+        <attr name="marginVertical" format="dimension" />
+    </declare-styleable>
+
+    <declare-styleable name="TextFlowLayout">
+        <attr name="textSize" format="dimension" />
+        <attr name="textPaddingHorizontal" format="dimension" />
+        <attr name="textPaddingVertical" format="dimension" />
+        <attr name="textColor" format="reference" />
+        <attr name="textBackground" format="reference" />
+    </declare-styleable>
+</resources>

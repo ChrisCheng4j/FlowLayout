@@ -3,14 +3,20 @@ package com.mic.library;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+
 public class FlowLayout extends ViewGroup {
 
     private static final float DEFAULT_MARGIN = 12f;
+    private static final String BUNDLE_KEY_STATE = "savedInstance";
+    private static final String BUNDLE_KEY_SELECTS = "selects";
 
     private float horizontalMargin;
     private float verticalMargin;
@@ -128,6 +134,46 @@ public class FlowLayout extends ViewGroup {
             v.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
             childLeft += horizontalMargin + childWidth;
         }
+    }
+
+    @Override
+    protected Parcelable onSaveInstanceState() {
+        int count = getChildCount();
+        if (count <= 0)
+            return super.onSaveInstanceState();
+
+        ArrayList<Integer> selects = new ArrayList<>();
+        Bundle bundle = new Bundle();
+        bundle.putParcelable(BUNDLE_KEY_STATE, super.onSaveInstanceState());
+
+        for (int i = 0; i < count; i++) {
+            if (getChildAt(i).isSelected())
+                selects.add(i);
+        }
+
+        bundle.putIntegerArrayList(BUNDLE_KEY_SELECTS, selects);
+        return bundle;
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        if (state instanceof Bundle) {
+            Bundle bundle = (Bundle) state;
+            ArrayList<Integer> selects = bundle.getIntegerArrayList(BUNDLE_KEY_SELECTS);
+            if (selects != null) {
+                int size = selects.size();
+                if (size > 0) {
+                    for (int i = 0; i < size; i++) {
+                        View v = getChildAt(i);
+                        if (v != null)
+                            v.setSelected(true);
+                    }
+                    super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_KEY_STATE));
+                    return;
+                }
+            }
+        }
+        super.onRestoreInstanceState(state);
     }
 
     private void initAttrs(Context context, AttributeSet attrs) {

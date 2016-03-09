@@ -10,7 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 
-import java.util.ArrayList;
+import java.util.LinkedHashSet;
 
 public class FlowLayout extends ViewGroup {
 
@@ -20,6 +20,8 @@ public class FlowLayout extends ViewGroup {
 
     private float horizontalMargin;
     private float verticalMargin;
+    private int maxSelectedNum;
+    private LinkedHashSet<Integer> selectedPos;
     protected OnStateChangedListener listener;
     private MotionEvent motionEvent;
 
@@ -31,10 +33,34 @@ public class FlowLayout extends ViewGroup {
         super(context, attrs);
         setClickable(true);
         initAttrs(context, attrs);
+        initFields();
     }
 
     public void setStateChangedListener(OnStateChangedListener listener) {
         this.listener = listener;
+    }
+
+    public void setMaxSelectedNum(int max) {
+        maxSelectedNum = max;
+    }
+
+    public void setAllState(boolean isSelected) {
+        int count = getChildCount();
+
+        if (isSelected) {
+            for (int i = 0; i < count; i++) {
+                selectedPos.add(i);
+                getChildAt(i).setSelected(true);
+            }
+        } else {
+            selectedPos.clear();
+            for (int i = 0; i < count; i++)
+                getChildAt(i).setSelected(false);
+        }
+    }
+
+    public LinkedHashSet<Integer> getSelectedPos() {
+        return selectedPos;
     }
 
     @Override
@@ -58,10 +84,18 @@ public class FlowLayout extends ViewGroup {
             int pos = findPosByView(child);
 
             if (pos != Constants.INVALID_RESULT) {
-                child.setSelected(!child.isSelected());
+                boolean preState = child.isSelected();
 
-                if (listener != null)
-                    listener.onStateChanged(pos, child.isSelected());
+                if (preState) {
+                    selectedPos.remove(pos);
+                    child.setSelected(false);
+                } else {
+                    if (selectedPos.size() != maxSelectedNum) {
+                        selectedPos.add(pos);
+                        child.setSelected(true);
+                    } else if (listener != null)
+                        listener.onMaxNumSelected();
+                }
             }
         }
 
@@ -142,32 +176,27 @@ public class FlowLayout extends ViewGroup {
         if (count <= 0)
             return super.onSaveInstanceState();
 
-        ArrayList<Integer> selects = new ArrayList<>();
         Bundle bundle = new Bundle();
         bundle.putParcelable(BUNDLE_KEY_STATE, super.onSaveInstanceState());
-
-        for (int i = 0; i < count; i++) {
-            if (getChildAt(i).isSelected())
-                selects.add(i);
-        }
-
-        bundle.putIntegerArrayList(BUNDLE_KEY_SELECTS, selects);
+        bundle.putSerializable(BUNDLE_KEY_SELECTS, selectedPos);
         return bundle;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            ArrayList<Integer> selects = bundle.getIntegerArrayList(BUNDLE_KEY_SELECTS);
-            if (selects != null) {
-                int size = selects.size();
+            selectedPos = (LinkedHashSet<Integer>) bundle.getSerializable(BUNDLE_KEY_SELECTS);
+            if (selectedPos != null) {
+                int size = selectedPos.size();
                 if (size > 0) {
-                    for (int i = 0; i < size; i++) {
+                    for (int i : selectedPos) {
                         View v = getChildAt(i);
                         if (v != null)
                             v.setSelected(true);
                     }
+
                     super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_KEY_STATE));
                     return;
                 }
@@ -182,7 +211,12 @@ public class FlowLayout extends ViewGroup {
                 R.styleable.FlowLayout_marginHorizontal, dp2px(DEFAULT_MARGIN));
         verticalMargin = a.getDimensionPixelSize(
                 R.styleable.FlowLayout_marginVertical, dp2px(DEFAULT_MARGIN));
+        maxSelectedNum = a.getInteger(R.styleable.FlowLayout_maxSelectedNum, Constants.INVALID_RESULT);
         a.recycle();
+    }
+
+    private void initFields() {
+        selectedPos = new LinkedHashSet<>();
     }
 
     private View findChild(int x, int y) {

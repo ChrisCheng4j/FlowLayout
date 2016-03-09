@@ -2,6 +2,7 @@
     <declare-styleable name="FlowLayout">
         <attr name="marginHorizontal" format="dimension" />
         <attr name="marginVertical" format="dimension" />
+        <attr name="maxSelectedNum" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="TextFlowLayout">

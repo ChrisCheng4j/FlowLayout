@@ -18,12 +18,12 @@ public class FlowLayout extends ViewGroup {
     private static final String BUNDLE_KEY_STATE = "savedInstance";
     private static final String BUNDLE_KEY_SELECTS = "selects";
 
-    private float horizontalMargin;
-    private float verticalMargin;
-    private int maxSelectedNum;
-    private LinkedHashSet<Integer> selectedPos;
-    protected OnStateChangedListener listener;
-    private MotionEvent motionEvent;
+    private float mHorizontalMargin;
+    private float mVerticalMargin;
+    private int mMaxSelectedNum;
+    private LinkedHashSet<Integer> mSelectedPos;
+    protected OnStateChangedListener mListener;
+    private MotionEvent mMotionEvent;
 
     public FlowLayout(Context context) {
         this(context, null);
@@ -37,11 +37,11 @@ public class FlowLayout extends ViewGroup {
     }
 
     public void setStateChangedListener(OnStateChangedListener listener) {
-        this.listener = listener;
+        this.mListener = listener;
     }
 
     public void setMaxSelectedNum(int max) {
-        maxSelectedNum = max;
+        mMaxSelectedNum = max;
     }
 
     public void setAllState(boolean isSelected) {
@@ -49,36 +49,36 @@ public class FlowLayout extends ViewGroup {
 
         if (isSelected) {
             for (int i = 0; i < count; i++) {
-                selectedPos.add(i);
+                mSelectedPos.add(i);
                 getChildAt(i).setSelected(true);
             }
         } else {
-            selectedPos.clear();
+            mSelectedPos.clear();
             for (int i = 0; i < count; i++)
                 getChildAt(i).setSelected(false);
         }
     }
 
     public LinkedHashSet<Integer> getSelectedPos() {
-        return selectedPos;
+        return mSelectedPos;
     }
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (event.getAction() == MotionEvent.ACTION_UP)
-            motionEvent = MotionEvent.obtain(event);
+            mMotionEvent = MotionEvent.obtain(event);
 
         return super.onTouchEvent(event);
     }
 
     @Override
     public boolean performClick() {
-        if (motionEvent == null)
+        if (mMotionEvent == null)
             return super.performClick();
 
-        View child = findChild((int) motionEvent.getX(), (int) motionEvent.getY());
+        View child = findChild((int) mMotionEvent.getX(), (int) mMotionEvent.getY());
 
-        motionEvent = null;
+        mMotionEvent = null;
 
         if (child != null) {
             int pos = findPosByView(child);
@@ -87,14 +87,14 @@ public class FlowLayout extends ViewGroup {
                 boolean preState = child.isSelected();
 
                 if (preState) {
-                    selectedPos.remove(pos);
+                    mSelectedPos.remove(pos);
                     child.setSelected(false);
                 } else {
-                    if (selectedPos.size() != maxSelectedNum) {
-                        selectedPos.add(pos);
+                    if (mSelectedPos.size() != mMaxSelectedNum) {
+                        mSelectedPos.add(pos);
                         child.setSelected(true);
-                    } else if (listener != null)
-                        listener.onMaxNumSelected();
+                    } else if (mListener != null)
+                        mListener.onMaxNumSelected();
                 }
             }
         }
@@ -131,10 +131,10 @@ public class FlowLayout extends ViewGroup {
 
             if (childLeft + childWidth + getPaddingRight() > selfWidth) {
                 childLeft = getPaddingLeft();
-                childTop += verticalMargin + lineHeight;
+                childTop += mVerticalMargin + lineHeight;
                 lineHeight = childHeight;
             } else
-                childLeft += horizontalMargin + childWidth;
+                childLeft += mHorizontalMargin + childWidth;
         }
 
         setMeasuredDimension(selfWidth, resolveSize(childTop + lineHeight + getPaddingBottom(), heightMeasureSpec));
@@ -161,12 +161,12 @@ public class FlowLayout extends ViewGroup {
 
             if (childLeft + childWidth + getPaddingRight() > w) {
                 childLeft = getPaddingLeft();
-                childTop += verticalMargin + lineHeight;
+                childTop += mVerticalMargin + lineHeight;
                 lineHeight = childHeight;
             }
 
             v.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-            childLeft += horizontalMargin + childWidth;
+            childLeft += mHorizontalMargin + childWidth;
         }
     }
 
@@ -178,7 +178,7 @@ public class FlowLayout extends ViewGroup {
 
         Bundle bundle = new Bundle();
         bundle.putParcelable(BUNDLE_KEY_STATE, super.onSaveInstanceState());
-        bundle.putSerializable(BUNDLE_KEY_SELECTS, selectedPos);
+        bundle.putSerializable(BUNDLE_KEY_SELECTS, mSelectedPos);
         return bundle;
     }
 
@@ -187,11 +187,11 @@ public class FlowLayout extends ViewGroup {
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            selectedPos = (LinkedHashSet<Integer>) bundle.getSerializable(BUNDLE_KEY_SELECTS);
-            if (selectedPos != null) {
-                int size = selectedPos.size();
+            mSelectedPos = (LinkedHashSet<Integer>) bundle.getSerializable(BUNDLE_KEY_SELECTS);
+            if (mSelectedPos != null) {
+                int size = mSelectedPos.size();
                 if (size > 0) {
-                    for (int i : selectedPos) {
+                    for (int i : mSelectedPos) {
                         View v = getChildAt(i);
                         if (v != null)
                             v.setSelected(true);
@@ -207,16 +207,16 @@ public class FlowLayout extends ViewGroup {
 
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-        horizontalMargin = a.getDimensionPixelSize(
+        mHorizontalMargin = a.getDimensionPixelSize(
                 R.styleable.FlowLayout_marginHorizontal, dp2px(DEFAULT_MARGIN));
-        verticalMargin = a.getDimensionPixelSize(
+        mVerticalMargin = a.getDimensionPixelSize(
                 R.styleable.FlowLayout_marginVertical, dp2px(DEFAULT_MARGIN));
-        maxSelectedNum = a.getInteger(R.styleable.FlowLayout_maxSelectedNum, Constants.INVALID_RESULT);
+        mMaxSelectedNum = a.getInteger(R.styleable.FlowLayout_maxSelectedNum, Constants.INVALID_RESULT);
         a.recycle();
     }
 
     private void initFields() {
-        selectedPos = new LinkedHashSet<>();
+        mSelectedPos = new LinkedHashSet<>();
     }
 
     private View findChild(int x, int y) {

@@ -16,11 +16,11 @@ public class TextFlowLayout extends FlowLayout {
     private static final float DEFAULT_TEXT_PADDING_HORIZONTAL = 12f;
     private static final float DEFAULT_TEXT_PADDING_VERTICAL = 10f;
 
-    private float textSize;
-    private int textPaddingHorizontal;
-    private int textPaddingVertical;
-    private ColorStateList textColor;
-    private int textBackgroundId;
+    private float mTextSize;
+    private int mTextPaddingHorizontal;
+    private int mTextPaddingVertical;
+    private ColorStateList mTextColor;
+    private int mTextBackgroundId;
 
     public TextFlowLayout(Context context) {
         super(context);
@@ -40,10 +40,10 @@ public class TextFlowLayout extends FlowLayout {
         for (String text : texts) {
             TextView textView = new TextView(getContext());
             textView.setText(text);
-            textView.setTextSize(textSize);
-            textView.setTextColor(textColor);
-            textView.setPadding(textPaddingHorizontal, textPaddingVertical, textPaddingHorizontal, textPaddingVertical);
-            textView.setBackgroundResource(textBackgroundId);
+            textView.setTextSize(mTextSize);
+            textView.setTextColor(mTextColor);
+            textView.setPadding(mTextPaddingHorizontal, mTextPaddingVertical, mTextPaddingHorizontal, mTextPaddingVertical);
+            textView.setBackgroundResource(mTextBackgroundId);
             textView.setGravity(Gravity.CENTER);
             textView.setSingleLine();
             textView.setEllipsize(TextUtils.TruncateAt.END);
@@ -54,15 +54,15 @@ public class TextFlowLayout extends FlowLayout {
 
     private void initAttrs(Context context, AttributeSet attrs) {
         TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.TextFlowLayout);
-        textSize = a.getDimension(R.styleable.TextFlowLayout_textSize, DEFAULT_TEXT_SIZE);
-        textPaddingHorizontal = (int) a.getDimension(R.styleable.TextFlowLayout_textPaddingHorizontal,
+        mTextSize = a.getDimension(R.styleable.TextFlowLayout_textSize, DEFAULT_TEXT_SIZE);
+        mTextPaddingHorizontal = (int) a.getDimension(R.styleable.TextFlowLayout_textPaddingHorizontal,
                 dp2px(DEFAULT_TEXT_PADDING_HORIZONTAL));
-        textPaddingVertical = (int) a.getDimension(R.styleable.TextFlowLayout_textPaddingVertical,
+        mTextPaddingVertical = (int) a.getDimension(R.styleable.TextFlowLayout_textPaddingVertical,
                 dp2px(DEFAULT_TEXT_PADDING_VERTICAL));
-        textColor = a.getColorStateList(R.styleable.TextFlowLayout_textColor);
-        if (textColor == null)
-            textColor = getResources().getColorStateList(R.color.text_state);
-        textBackgroundId = a.getResourceId(R.styleable.TextFlowLayout_textBackground, R.drawable.text_bg_selector);
+        mTextColor = a.getColorStateList(R.styleable.TextFlowLayout_textColor);
+        if (mTextColor == null)
+            mTextColor = getResources().getColorStateList(R.color.text_state);
+        mTextBackgroundId = a.getResourceId(R.styleable.TextFlowLayout_textBackground, R.drawable.text_bg_selector);
         a.recycle();
     }
 }

@@ -1,4 +1,4 @@
-package com.mic.flowlayout;
+package com.chrischeng.flowlayout;
 
 import org.junit.Test;
 

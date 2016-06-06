@@ -1,6 +1,7 @@
-package com.mic.library;
+package com.chrischeng.flowlayout;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -14,12 +15,9 @@ import java.util.LinkedHashSet;
 
 public class FlowLayout extends ViewGroup {
 
-    private static final float DEFAULT_MARGIN = 12f;
-    private static final String BUNDLE_KEY_STATE = "savedInstance";
-    private static final String BUNDLE_KEY_SELECTS = "selects";
-
-    private float mHorizontalMargin;
-    private float mVerticalMargin;
+    protected Resources mRes;
+    private float mHorizontalSpacing;
+    private float mVerticalSpacing;
     private int mMaxSelectedNum;
     private LinkedHashSet<Integer> mSelectedPos;
     protected OnStateChangedListener mListener;
@@ -32,7 +30,7 @@ public class FlowLayout extends ViewGroup {
     public FlowLayout(Context context, AttributeSet attrs) {
         super(context, attrs);
         setClickable(true);
-        initAttrs(context, attrs);
+        initAttrs(attrs);
         initFields();
     }
 
@@ -106,11 +104,6 @@ public class FlowLayout extends ViewGroup {
         removeAllViews();
     }
 
-    protected int dp2px(float dp) {
-        float scale = getResources().getDisplayMetrics().density;
-        return (int) (dp * scale + 0.5f);
-    }
-
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         int selfWidth = resolveSize(0, widthMeasureSpec);
@@ -131,10 +124,10 @@ public class FlowLayout extends ViewGroup {
 
             if (childLeft + childWidth + getPaddingRight() > selfWidth) {
                 childLeft = getPaddingLeft();
-                childTop += mVerticalMargin + lineHeight;
+                childTop += mVerticalSpacing + lineHeight;
                 lineHeight = childHeight;
             } else
-                childLeft += mHorizontalMargin + childWidth;
+                childLeft += mHorizontalSpacing + childWidth;
         }
 
         setMeasuredDimension(selfWidth, resolveSize(childTop + lineHeight + getPaddingBottom(), heightMeasureSpec));
@@ -161,12 +154,12 @@ public class FlowLayout extends ViewGroup {
 
             if (childLeft + childWidth + getPaddingRight() > w) {
                 childLeft = getPaddingLeft();
-                childTop += mVerticalMargin + lineHeight;
+                childTop += mVerticalSpacing + lineHeight;
                 lineHeight = childHeight;
             }
 
             v.layout(childLeft, childTop, childLeft + childWidth, childTop + childHeight);
-            childLeft += mHorizontalMargin + childWidth;
+            childLeft += mHorizontalSpacing + childWidth;
         }
     }
 
@@ -177,8 +170,8 @@ public class FlowLayout extends ViewGroup {
             return super.onSaveInstanceState();
 
         Bundle bundle = new Bundle();
-        bundle.putParcelable(BUNDLE_KEY_STATE, super.onSaveInstanceState());
-        bundle.putSerializable(BUNDLE_KEY_SELECTS, mSelectedPos);
+        bundle.putParcelable(Constants.BUNDLE_KEY_STATE, super.onSaveInstanceState());
+        bundle.putSerializable(Constants.BUNDLE_KEY_SELECTS, mSelectedPos);
         return bundle;
     }
 
@@ -187,7 +180,7 @@ public class FlowLayout extends ViewGroup {
     protected void onRestoreInstanceState(Parcelable state) {
         if (state instanceof Bundle) {
             Bundle bundle = (Bundle) state;
-            mSelectedPos = (LinkedHashSet<Integer>) bundle.getSerializable(BUNDLE_KEY_SELECTS);
+            mSelectedPos = (LinkedHashSet<Integer>) bundle.getSerializable(Constants.BUNDLE_KEY_SELECTS);
             if (mSelectedPos != null) {
                 int size = mSelectedPos.size();
                 if (size > 0) {
@@ -197,7 +190,7 @@ public class FlowLayout extends ViewGroup {
                             v.setSelected(true);
                     }
 
-                    super.onRestoreInstanceState(bundle.getParcelable(BUNDLE_KEY_STATE));
+                    super.onRestoreInstanceState(bundle.getParcelable(Constants.BUNDLE_KEY_STATE));
                     return;
                 }
             }
@@ -205,13 +198,12 @@ public class FlowLayout extends ViewGroup {
         super.onRestoreInstanceState(state);
     }
 
-    private void initAttrs(Context context, AttributeSet attrs) {
-        TypedArray a = context.obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-        mHorizontalMargin = a.getDimensionPixelSize(
-                R.styleable.FlowLayout_marginHorizontal, dp2px(DEFAULT_MARGIN));
-        mVerticalMargin = a.getDimensionPixelSize(
-                R.styleable.FlowLayout_marginVertical, dp2px(DEFAULT_MARGIN));
-        mMaxSelectedNum = a.getInteger(R.styleable.FlowLayout_maxSelectedNum, Constants.INVALID_RESULT);
+    private void initAttrs(AttributeSet attrs) {
+        mRes = getResources();
+        TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FlowLayout);
+        mHorizontalSpacing = a.getDimension(R.styleable.FlowLayout_fl_spacing_horizontal, mRes.getDimension(R.dimen.spacing));
+        mVerticalSpacing = a.getDimension(R.styleable.FlowLayout_fl_spcaing_vertical, mRes.getDimension(R.dimen.spacing));
+        mMaxSelectedNum = a.getInteger(R.styleable.FlowLayout_fl_max_selected, Constants.INVALID_RESULT);
         a.recycle();
     }
 

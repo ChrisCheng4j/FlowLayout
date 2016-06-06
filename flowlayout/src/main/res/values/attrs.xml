@@ -1,15 +1,15 @@
 <resources>
     <declare-styleable name="FlowLayout">
-        <attr name="marginHorizontal" format="dimension" />
-        <attr name="marginVertical" format="dimension" />
-        <attr name="maxSelectedNum" format="integer" />
+        <attr name="fl_spacing_horizontal" format="dimension" />
+        <attr name="fl_spcaing_vertical" format="dimension" />
+        <attr name="fl_max_selected" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="TextFlowLayout">
-        <attr name="textSize" format="dimension" />
-        <attr name="textPaddingHorizontal" format="dimension" />
-        <attr name="textPaddingVertical" format="dimension" />
-        <attr name="textColor" format="reference" />
-        <attr name="textBackground" format="reference" />
+        <attr name="android:textSize" />
+        <attr name="android:textColor" />
+        <attr name="tfl_padding_horizontal" format="dimension" />
+        <attr name="tfl_padding_vertical" format="dimension" />
+        <attr name="tfl_background" format="reference" />
     </declare-styleable>
 </resources>

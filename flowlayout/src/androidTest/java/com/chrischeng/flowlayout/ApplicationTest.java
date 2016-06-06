@@ -1,4 +1,4 @@
-package com.mic.library;
+package com.chrischeng.flowlayout;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;

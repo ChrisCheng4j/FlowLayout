@@ -1,5 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.mic.flowlayout">
+    package="com.chrischeng.sample">
 
     <application
         android:allowBackup="true"

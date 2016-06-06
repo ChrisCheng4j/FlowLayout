@@ -1,4 +1,4 @@
-package com.mic.library;
+package com.sample;
 
 import org.junit.Test;
 

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="spacing">12dp</dimen>
+    <dimen name="text_padding">12dp</dimen>
+    <integer name="text_size">14</integer>
+</resources>

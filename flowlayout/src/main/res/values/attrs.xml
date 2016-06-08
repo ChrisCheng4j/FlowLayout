@@ -4,12 +4,4 @@
         <attr name="fl_spcaing_vertical" format="dimension" />
         <attr name="fl_max_selected" format="integer" />
     </declare-styleable>
-
-    <declare-styleable name="TextFlowLayout">
-        <attr name="android:textSize" />
-        <attr name="android:textColor" />
-        <attr name="tfl_padding_horizontal" format="dimension" />
-        <attr name="tfl_padding_vertical" format="dimension" />
-        <attr name="tfl_background" format="reference" />
-    </declare-styleable>
 </resources>

@@ -15,7 +15,6 @@ import java.util.LinkedHashSet;
 
 public class FlowLayout extends ViewGroup {
 
-    protected Resources mRes;
     private float mHorizontalSpacing;
     private float mVerticalSpacing;
     private int mMaxSelectedNum;
@@ -34,7 +33,19 @@ public class FlowLayout extends ViewGroup {
         initFields();
     }
 
-    public void setStateChangedListener(OnStateChangedListener listener) {
+    public void setAdapter(FlowAdapter adapter) {
+        removeAllViews();
+        mSelectedPos.clear();
+
+        for (int i = 0; i < adapter.getCount(); i++) {
+            View v = adapter.getView(i, this);
+            addView(v);
+            if (v.isSelected())
+                mSelectedPos.add(i);
+        }
+    }
+
+    public void setOnStateChangedListener(OnStateChangedListener listener) {
         this.mListener = listener;
     }
 
@@ -87,10 +98,14 @@ public class FlowLayout extends ViewGroup {
                 if (preState) {
                     mSelectedPos.remove(pos);
                     child.setSelected(false);
+                    if (mListener != null)
+                        mListener.onStateChanged(pos, false);
                 } else {
                     if (mSelectedPos.size() != mMaxSelectedNum) {
                         mSelectedPos.add(pos);
                         child.setSelected(true);
+                        if (mListener != null)
+                            mListener.onStateChanged(pos, true);
                     } else if (mListener != null)
                         mListener.onMaxNumSelected();
                 }
@@ -98,10 +113,6 @@ public class FlowLayout extends ViewGroup {
         }
 
         return true;
-    }
-
-    protected void reset() {
-        removeAllViews();
     }
 
     @Override
@@ -199,10 +210,11 @@ public class FlowLayout extends ViewGroup {
     }
 
     private void initAttrs(AttributeSet attrs) {
-        mRes = getResources();
+        Resources res = getResources();
+
         TypedArray a = getContext().obtainStyledAttributes(attrs, R.styleable.FlowLayout);
-        mHorizontalSpacing = a.getDimension(R.styleable.FlowLayout_fl_spacing_horizontal, mRes.getDimension(R.dimen.spacing));
-        mVerticalSpacing = a.getDimension(R.styleable.FlowLayout_fl_spcaing_vertical, mRes.getDimension(R.dimen.spacing));
+        mHorizontalSpacing = a.getDimension(R.styleable.FlowLayout_fl_spacing_horizontal, res.getDimension(R.dimen.spacing));
+        mVerticalSpacing = a.getDimension(R.styleable.FlowLayout_fl_spcaing_vertical, res.getDimension(R.dimen.spacing));
         mMaxSelectedNum = a.getInteger(R.styleable.FlowLayout_fl_max_selected, Constants.INVALID_RESULT);
         a.recycle();
     }

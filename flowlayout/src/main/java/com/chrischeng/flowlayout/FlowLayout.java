@@ -33,6 +33,10 @@ public class FlowLayout extends ViewGroup {
         initFields();
     }
 
+    public void setOnStateChangedListener(OnStateChangedListener listener) {
+        this.mListener = listener;
+    }
+
     public void setAdapter(FlowAdapter adapter) {
         removeAllViews();
         mSelectedPos.clear();
@@ -45,8 +49,14 @@ public class FlowLayout extends ViewGroup {
         }
     }
 
-    public void setOnStateChangedListener(OnStateChangedListener listener) {
-        this.mListener = listener;
+    public void setHorizontalSpacing(int horizontalSpacing) {
+        mHorizontalSpacing = horizontalSpacing;
+        invalidate();
+    }
+
+    public void setVerticalSpacing(int verticalSpacing) {
+        mVerticalSpacing = verticalSpacing;
+        invalidate();
     }
 
     public void setMaxSelectedNum(int max) {

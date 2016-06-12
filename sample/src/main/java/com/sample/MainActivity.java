@@ -26,6 +26,8 @@ public class MainActivity extends AppCompatActivity {
         final FlowLayout flowLayout = (FlowLayout) findViewById(R.id.fl);
         assert flowLayout != null;
         flowLayout.setAdapter(new TextFlowAdapter(list));
+        flowLayout.setHorizontalSpacing(100);
+        flowLayout.setVerticalSpacing(20);
         flowLayout.setMaxSelectedNum(5);
         flowLayout.setOnStateChangedListener(new OnStateChangedListener() {
             @Override

@@ -4,7 +4,7 @@ A flowlayout on android.
 Add the dependencies to your gradle file:
 ```javascript
 dependencies {
-    compile 'com.chrischeng:flowlayout:1.1.1'
+    compile 'com.chrischeng:flowlayout:1.1.2'
 }
 ```
 

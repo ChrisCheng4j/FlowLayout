@@ -210,11 +210,11 @@ public class FlowLayout extends ViewGroup {
                         if (v != null)
                             v.setSelected(true);
                     }
-
-                    super.onRestoreInstanceState(bundle.getParcelable(Constants.BUNDLE_KEY_STATE));
-                    return;
                 }
             }
+
+            super.onRestoreInstanceState(bundle.getParcelable(Constants.BUNDLE_KEY_STATE));
+            return;
         }
         super.onRestoreInstanceState(state);
     }

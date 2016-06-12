@@ -4,7 +4,7 @@ A flowlayout on android.
 **Add the dependencies to your gradle file:**
 ```javascript
 dependencies {
-	compile 'com.chrischeng:flowlayout:1.1.0'
+	compile 'com.chrischeng:flowlayout:1.1.1'
 }
 ```
 
@@ -19,6 +19,11 @@ The usage is similar to listview and FlowAdapter is the bridge between a FlowLay
         app:fl_spcaing_vertical="30dp" /> //the spacing between view in one row.
 ```
 **Java:**
+And you can also control the spacing in java code.
+```java
+flowLayout.setHorizontalSpacing(50); //default is 12dp
+flowLayout.setVerticalSpacing(50); //default is 12dp
+```
 Adapter:
 ```java
 @Override
